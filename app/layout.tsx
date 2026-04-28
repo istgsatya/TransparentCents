@@ -2,22 +2,22 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { ReactNode } from 'react'
 import { AppShell } from '@/components/AppShell'
-import { Inter } from 'next/font/google'
+import { Outfit } from 'next/font/google'
 import { AuthProvider } from '@/components/AuthProvider'
 import ThemeProvider from '@/components/ThemeProvider'
 import ToastProvider from '@/components/ToastProvider'
 
-const inter = Inter({ subsets: ['latin'] })
+const outfit = Outfit({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Transparent Cents',
-  description: 'Instagram for Social Good'
+  description: 'Premium Platform for Social Good',
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} min-h-screen antialiased`}> 
+      <body className={`${outfit.className} min-h-screen antialiased bg-slate-50 dark:bg-[#050810] text-slate-900 dark:text-slate-50 selection:bg-emerald-500/30`}> 
         <ThemeProvider>
           <ToastProvider>
             <AuthProvider>
