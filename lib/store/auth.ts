@@ -1,6 +1,6 @@
 "use client"
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { persist, createJSONStorage } from 'zustand/middleware'
 
 export type Wallet = { address: string; createdAt?: string }
 export type User = {
@@ -25,22 +25,36 @@ type AuthState = {
   clearAuth: () => void
 }
 
+const safeStorage = {
+  getItem: (name: string): string | null => {
+    try { return localStorage.getItem(name) } catch (e) { return null }
+  },
+  setItem: (name: string, value: string): void => {
+    try { localStorage.setItem(name, value) } catch (e) {}
+  },
+  removeItem: (name: string): void => {
+    try { localStorage.removeItem(name) } catch (e) {}
+  }
+}
+
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
-  accessToken: null,
-  user: null,
-  isAuthenticated: false,
-  // Start true until AuthProvider finishes initial /auth/me check
-  authLoading: true,
+      accessToken: null,
+      user: null,
+      isAuthenticated: false,
+      authLoading: true,
       login: (token, user) => set({ accessToken: token, user, isAuthenticated: true }),
       logout: () => set({ accessToken: null, user: null, isAuthenticated: false }),
       setUser: (user) => set({ user }),
       setAccessToken: (token) => set({ accessToken: token, isAuthenticated: !!token }),
-  setAuthLoading: (loading) => set({ authLoading: loading }),
-  setAuth: (token, user) => set({ accessToken: token, user, isAuthenticated: true }),
-  clearAuth: () => set({ accessToken: null, user: null, isAuthenticated: false })
+      setAuthLoading: (loading) => set({ authLoading: loading }),
+      setAuth: (token, user) => set({ accessToken: token, user, isAuthenticated: true }),
+      clearAuth: () => set({ accessToken: null, user: null, isAuthenticated: false })
     }),
-    { name: 'tc-auth' }
+    { 
+      name: 'tc-auth',
+      storage: createJSONStorage(() => safeStorage)
+    }
   )
 )
